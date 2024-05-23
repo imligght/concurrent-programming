@@ -1,5 +1,3 @@
-// Dupla: Caio Cesar R de Aquino e Luan da Silva Moraes
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -25,47 +23,42 @@
 // - cada thread deve incrementar contador_global (operador ++) n_loops vezes
 // - pai deve esperar pelas worker threads  antes de imprimir!
 
+pthread_mutex_t mutex;
 
 int contador_global = 0;
 
-void* thread(void* arg) {
-    for (int i = 0; i < *((int*)arg); i++) {
-        contador_global++;
+
+void *incrementor(void *arg) {
+    int n_loops = *(int *)arg;
+    for (int i = 0; i < n_loops; i++) {
+        pthread_mutex_lock(&mutex);
+        contador_global += 1;
+        pthread_mutex_unlock(&mutex);
     }
-    pthread_exit(NULL);
+    pthread_exit(NULL); // ou return NULL;
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        printf("n_threads é obrigatório!\n");
         printf("Uso: %s n_threads n_loops\n", argv[0]);
         return 1;
     }
 
     int n_threads = atoi(argv[1]);
     int n_loops = atoi(argv[2]);
-    //...
-    pthread_t* threads = (pthread_t*) malloc(n_threads * sizeof(pthread_t));
+    pthread_t threads[n_threads];
 
-    if (!threads) {
-        printf("Impossível criar %d threads!", n_threads);
-        fflush(stdout);
-        return 1;
-    }
+    pthread_mutex_init(&mutex, NULL);
+    for (int i = 0; i < n_threads; i++)
+        pthread_create(&threads[i], NULL, incrementor, (void*)&n_loops);
 
-    for (int i = 0; i < n_threads; i++) {
-        pthread_create(&threads[i], NULL, thread, (void*)&n_loops);
-    }
-
-    for (int i = 0; i < n_threads; i++) {
+    for (int i = 0; i < n_threads; i++)
         pthread_join(threads[i], NULL);
-    }
-
-    free(threads);
 
     printf("Contador: %d\n", contador_global);
-    fflush(stdout);
-    printf("Esperado: %d\n", n_threads*n_loops);
-    fflush(stdout);
+    printf("Esperado: %d\n", n_threads * n_loops);
+
+    pthread_mutex_destroy(&mutex);
+
     return 0;
 }

@@ -1,3 +1,5 @@
+// Dupla: Caio Cesar R de Aquino e Luan da Silva Moraes
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
