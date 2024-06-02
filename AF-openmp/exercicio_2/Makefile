@@ -2,7 +2,7 @@ CFLAGS=-pthread -D__USE_XOPEN2K8 -D_POSIX_C_SOURCE=200809L -fopenmp -g -O0 -I.
 # Só ativa sanitizers se não estivermos no cygwin nem num vgbuild
 ifneq ($(OS),Windows_NT)
 	ifneq ($(DISABLE_SANS),1)
-		CFLAGS +=  -fsanitize=address -fsanitize=undefined
+#		CFLAGS +=  -fsanitize=address -fsanitize=undefined
 	endif
 endif
 LFLAGS=

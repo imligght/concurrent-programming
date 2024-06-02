@@ -1,3 +1,5 @@
+// Dupla: Luan Moraes da Silva e Caio César Rodrigues de Aquino
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
